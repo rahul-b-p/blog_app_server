@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import Joi from "joi";
 import { errorMessage } from "../constants";
+import { logger } from "../utils/logger";
 
 config();
 
@@ -21,7 +22,8 @@ const envSchema = Joi.object<EnvVars>({
 const { error, value } = envSchema.validate(process.env);
 
 if (error) {
-  throw new Error(errorMessage.INVALID_ENV + "\n" + error.message);
+  logger.error(errorMessage.INVALID_ENV + "\n" + error.message);
+  process.exit(1);
 }
 
 export const env: EnvVars = value;
