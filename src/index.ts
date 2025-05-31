@@ -1,11 +1,16 @@
 import app from "./app";
+import { connectDB } from "./config/database";
 import "./config/env";
 import { logger } from "./utils/logger";
 
-const port = app.get('port');
+const port = app.get("port");
 
 const initializeApp = () => {
   try {
+    // Connect DB
+    connectDB();
+
+    // listen server
     app.listen(port, () => {
       logger.info(`app running at port:${port}`);
     });
