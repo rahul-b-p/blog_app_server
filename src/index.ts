@@ -1,6 +1,8 @@
 import app from "./app";
 import { connectDB } from "./config/database";
 import "./config/env";
+import { initializeMapping } from "./mapping";
+import { createDefaultAdmin } from "./utils/defaultAdmin";
 import { logger } from "./utils/logger";
 
 const port = app.get("port");
@@ -9,6 +11,12 @@ const initializeApp = async () => {
   try {
     // Connect DB
     await connectDB();
+
+    // Initializes the mapping
+    initializeMapping();
+
+    // Default Admin creation
+    await createDefaultAdmin();
 
     // listen server
     app.listen(port, () => {
@@ -22,6 +30,7 @@ const initializeApp = async () => {
 
 // Start the application
 initializeApp();
+
 
 // Handle uncaught errors
 process.on("unhandledRejection", (error) => {
