@@ -7,4 +7,5 @@ export interface IUser extends Document{
   email: string;
   passwordHash: string;
   role: UserRole;
+  verified:boolean;
 }

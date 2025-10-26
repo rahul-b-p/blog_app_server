@@ -6,6 +6,7 @@ export class UserDto {
   username!: string;
   email!: string;
   role!: UserRole;
+  verified!: boolean;
   createdAt!: Date;
   updatedAt!: Date;
 }
