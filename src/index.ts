@@ -5,10 +5,10 @@ import { logger } from "./utils/logger";
 
 const port = app.get("port");
 
-const initializeApp = () => {
+const initializeApp = async () => {
   try {
     // Connect DB
-    connectDB();
+    await connectDB();
 
     // listen server
     app.listen(port, () => {
