@@ -18,7 +18,7 @@ export const signUp = async (
       throw new BadRequestError(errorMessage.INVALID_ROLE);
     }
     const newUser = await userService.createUser({ role, ...user });
-    res.json(apiResponse(201, responseMessage.SIGNUP_SUCCESS, user));
+    res.json(apiResponse(201, responseMessage.SIGNUP_SUCCESS, newUser));
   } catch (error) {
     next(error);
   }
