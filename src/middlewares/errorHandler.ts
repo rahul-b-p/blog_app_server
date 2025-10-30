@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { logger } from "../utils/logger";
 import { CustomError } from "../errors";
 
-
 export const errorHandler = (
   err: Error,
   req: Request,
@@ -12,6 +11,14 @@ export const errorHandler = (
   if (err instanceof CustomError) {
     logger.warn(err.message);
     return res.status(err.statusCode).json(err.serialize());
+  }
+
+  if (err instanceof SyntaxError && "body" in err) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid JSON format. Please check your request body.",
+      statusCode: 400,
+    });
   }
 
   logger.error(err.message);
