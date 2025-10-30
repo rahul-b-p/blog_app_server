@@ -1,7 +1,7 @@
 import { createMap, forMember, mapFrom } from '@automapper/core';
 import { mapper } from './mapper'; // your initialized mapper
 import { User } from '../models';
-import { UserDto } from '../dtos/user.dto';
+import { UserDto } from './dtos';
 
 export function configureUserMapping() {
   createMap(

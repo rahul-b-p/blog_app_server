@@ -12,3 +12,11 @@ export interface IUser extends Document{
   createdAt:Date;
   updatedAt:Date;
 }
+
+export interface CreateUserDto {
+  fullName: string;
+  username: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}

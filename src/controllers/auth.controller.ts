@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateUserDto } from "../dtos";
 import { userService } from "../services";
 import { UserRole } from "../enums";
 import { BadRequestError } from "../errors";
 import { errorMessage, responseMessage } from "../constants";
 import { apiResponse } from "../utils/apiResponse";
+import { CreateUserDto } from "../interfaces";
 
 export const signUp = async (
   req: Request<{ role: string }, any, Omit<CreateUserDto, "role">>,
