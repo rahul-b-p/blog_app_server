@@ -1,4 +1,4 @@
-import { UserRole } from "../enums";
+import { UserRole } from "../../enums";
 
 export class UserDto {
   id!: string;
@@ -9,12 +9,4 @@ export class UserDto {
   verified!: boolean;
   createdAt!: Date;
   updatedAt!: Date;
-}
-
-export interface CreateUserDto {
-  fullName: string;
-  username: string;
-  email: string;
-  password: string;
-  role: UserRole;
 }
