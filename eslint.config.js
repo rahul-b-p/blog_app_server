@@ -23,7 +23,7 @@ export default [
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        projectService: true,
+        projectService: false,
         ecmaVersion: 2025,
         sourceType: 'module',
       },
