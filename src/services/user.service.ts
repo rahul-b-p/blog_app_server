@@ -6,14 +6,11 @@ import { hashPassword } from "../utils/hashPassword";
 import { logger } from "../utils/logger";
 import { handleMongoDBError } from "../utils/mongo-error";
 
-export const findUserByUsername = async (
-  username: string
-): Promise<UserDto | null> => {
+export const findUserByUsername = async (username: string) => {
   logger.debug(`Finding user by username: ${username}`);
 
   try {
-    const user = await User.findOne({ username }).exec();
-    return user ? mapper.map(user, User, UserDto) : null;
+    return await User.findOne({ username }).exec();
   } catch (error: any) {
     logger.error(error.message);
     handleMongoDBError(error);

@@ -3,6 +3,7 @@ import Joi from "joi";
 import { errorMessage } from "../constants";
 import { logger } from "../utils/logger";
 import { fullnameSchema, passwordSchema, usernameSchema } from "../schemas";
+import { expirationSchema, secretKeySchema } from "../schemas/jwt.schema";
 
 config();
 
@@ -15,6 +16,10 @@ interface EnvVars {
   ADMIN_EMAIL: string;
   ADMIN_FULLNAME: string;
   ADMIN_PASSWORD: string;
+  REFRESH_SECRET: string;
+  REFRESH_EXPIRE_IN: string;
+  ACCESS_SECRET: string;
+  ACCESS_EXPIRE_IN: string;
 }
 
 const envSchema = Joi.object<EnvVars>({
@@ -26,6 +31,10 @@ const envSchema = Joi.object<EnvVars>({
   ADMIN_FULLNAME: fullnameSchema.default("Admin").optional(),
   ADMIN_PASSWORD: passwordSchema.default("Admin@123").optional(),
   ADMIN_EMAIL: Joi.string().email().required(),
+  REFRESH_SECRET: secretKeySchema.required(),
+  REFRESH_EXPIRE_IN: expirationSchema.required(),
+  ACCESS_SECRET: secretKeySchema.required(),
+  ACCESS_EXPIRE_IN: expirationSchema.required(),
 })
   .options({ allowUnknown: true })
   .prefs({ convert: true });
@@ -37,4 +46,4 @@ if (error) {
   process.exit(1);
 }
 
-export const env: EnvVars = value;
+export default value as EnvVars;

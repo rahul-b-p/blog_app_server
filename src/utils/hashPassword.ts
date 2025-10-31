@@ -1,16 +1,31 @@
-import bcrypt from 'bcrypt';
-import { logger } from './logger';
-import {env} from '../config/env'
+import bcrypt from "bcrypt";
+import { logger } from "./logger";
+import env from "../config/env";
 
 export const hashPassword = async (password: string): Promise<string> => {
-    logger.debug('Securing the password')
-    const functionName = hashPassword.name;
-    try {
-        const salt = await bcrypt.genSalt(Number(env.HASH_SALT));
-        const hashPass = await bcrypt.hash(password, salt);
+  logger.debug("Securing the password");
+  const functionName = hashPassword.name;
+  try {
+    const salt = await bcrypt.genSalt(Number(env.HASH_SALT));
+    const hashPass = await bcrypt.hash(password, salt);
 
-        return hashPass;
-    } catch (error: any) {
-        throw new Error(error.message);
-    }
+    return hashPass;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+export const comparePassword = async (
+  password: string,
+  passwordHash: string
+): Promise<boolean> => {
+  const functionName = comparePassword.name;
+
+  try {
+    const isValidPassword = await bcrypt.compare(password, passwordHash);
+
+    return isValidPassword;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
 };

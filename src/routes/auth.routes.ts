@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authController } from "../controllers";
 import { validateReqBody } from "../middlewares";
-import { signUpSchema } from "../schemas";
+import { signInSchema, signUpSchema } from "../schemas";
 
 const router = Router();
 
@@ -10,5 +10,7 @@ router.post(
   validateReqBody(signUpSchema),
   authController.signUp
 );
+
+router.post("/sign-in", validateReqBody(signInSchema), authController.signIn);
 
 export default router;
