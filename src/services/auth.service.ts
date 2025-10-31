@@ -1,9 +1,9 @@
-import { userService } from ".";
-import { errorMessage } from "../constants";
-import { AuthenticationError, NotFoundError } from "../errors";
-import { SignInDto } from "../interfaces";
-import { comparePassword } from "../utils/hashPassword";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import { userService } from '.';
+import { errorMessage } from '../constants';
+import { AuthenticationError, NotFoundError } from '../errors';
+import { SignInDto } from '../interfaces';
+import { comparePassword } from '../utils/hashPassword';
+import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 
 export const signIn = async (userData: SignInDto) => {
   const { password, username } = userData;

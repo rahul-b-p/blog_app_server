@@ -1,15 +1,16 @@
-import { NextFunction, Request, Response } from "express";
-import { authService, userService } from "../services";
-import { UserRole } from "../enums";
-import { BadRequestError } from "../errors";
-import { errorMessage, responseMessage } from "../constants";
-import { apiResponse } from "../utils/apiResponse";
-import { CreateUserDto, SignInDto } from "../interfaces";
+import { NextFunction, Request, Response } from 'express';
+import { authService, userService } from '../services';
+import { UserRole } from '../enums';
+import { BadRequestError } from '../errors';
+import { errorMessage, responseMessage } from '../constants';
+import { apiResponse } from '../utils/apiResponse';
+import { CreateUserDto, SignInDto } from '../interfaces';
 
 export const signUp = async (
-  req: Request<{ role: string }, any, Omit<CreateUserDto, "role">>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  req: Request<{ role: string }, any, Omit<CreateUserDto, 'role'>>,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const user = req.body;
@@ -25,9 +26,10 @@ export const signUp = async (
 };
 
 export const signIn = async (
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
   req: Request<{}, any, SignInDto>,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const data = await authService.signIn(req.body);

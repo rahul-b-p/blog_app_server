@@ -1,16 +1,17 @@
-import { CreateUserDto } from "../interfaces";
-import { mapper } from "../mapping";
-import { UserDto } from "../mapping/dtos";
-import { User } from "../models";
-import { hashPassword } from "../utils/hashPassword";
-import { logger } from "../utils/logger";
-import { handleMongoDBError } from "../utils/mongo-error";
+import { CreateUserDto } from '../interfaces';
+import { mapper } from '../mapping';
+import { UserDto } from '../mapping/dtos';
+import { User } from '../models';
+import { hashPassword } from '../utils/hashPassword';
+import { logger } from '../utils/logger';
+import { handleMongoDBError } from '../utils/mongo-error';
 
 export const findUserByUsername = async (username: string) => {
   logger.debug(`Finding user by username: ${username}`);
 
   try {
     return await User.findOne({ username }).exec();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error(error.message);
     handleMongoDBError(error);
@@ -19,7 +20,7 @@ export const findUserByUsername = async (username: string) => {
 };
 
 export const createUser = async (user: CreateUserDto): Promise<UserDto> => {
-  logger.debug("Creating new User");
+  logger.debug('Creating new User');
   const { password, ...userData } = user;
   const newUser = new User(userData);
 
@@ -28,6 +29,7 @@ export const createUser = async (user: CreateUserDto): Promise<UserDto> => {
   try {
     const savedUser = await newUser.save();
     return mapper.map(savedUser, User, UserDto);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error(`Error creating user: ${error.message}`);
     handleMongoDBError(error);

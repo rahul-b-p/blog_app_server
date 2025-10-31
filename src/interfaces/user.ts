@@ -1,5 +1,5 @@
-import { Document, ObjectId } from "mongoose";
-import { UserRole } from "../enums";
+import { Document, ObjectId } from 'mongoose';
+import { UserRole } from '../enums';
 
 export interface IUser extends Document {
   _id: ObjectId;
