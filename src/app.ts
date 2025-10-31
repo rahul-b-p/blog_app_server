@@ -1,6 +1,6 @@
 import express from "express";
 import { morganLogger } from "./utils/logger";
-import { env } from "./config/env";
+import env  from "./config/env";
 import { errorHandler, notFoundHandler } from "./middlewares";
 import router from "./routes";
 

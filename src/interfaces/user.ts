@@ -1,16 +1,16 @@
 import { Document, ObjectId } from "mongoose";
 import { UserRole } from "../enums";
 
-export interface IUser extends Document{
-  _id:ObjectId
+export interface IUser extends Document {
+  _id: ObjectId;
   fullName: string;
   username: string;
   email: string;
   passwordHash: string;
   role: UserRole;
-  verified:boolean;
-  createdAt:Date;
-  updatedAt:Date;
+  verified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreateUserDto {
@@ -19,4 +19,9 @@ export interface CreateUserDto {
   email: string;
   password: string;
   role: UserRole;
+}
+
+export interface SignInDto {
+  username: string;
+  password: string;
 }

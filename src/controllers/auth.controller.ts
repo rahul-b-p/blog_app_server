@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { userService } from "../services";
+import { authService, userService } from "../services";
 import { UserRole } from "../enums";
 import { BadRequestError } from "../errors";
 import { errorMessage, responseMessage } from "../constants";
 import { apiResponse } from "../utils/apiResponse";
-import { CreateUserDto } from "../interfaces";
+import { CreateUserDto, SignInDto } from "../interfaces";
 
 export const signUp = async (
   req: Request<{ role: string }, any, Omit<CreateUserDto, "role">>,
@@ -19,6 +19,19 @@ export const signUp = async (
     }
     const newUser = await userService.createUser({ role, ...user });
     res.json(apiResponse(201, responseMessage.SIGNUP_SUCCESS, newUser));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signIn = async (
+  req: Request<{}, any, SignInDto>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await authService.signIn(req.body);
+    res.json(apiResponse(200, responseMessage.SIGNIN_SUCCESS, data));
   } catch (error) {
     next(error);
   }

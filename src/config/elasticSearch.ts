@@ -1,5 +1,6 @@
 import { Client } from "@elastic/elasticsearch";
+import env from "./env";
 
-const client = new Client({ node: process.env.ELASTICSEARCH_URL });
+const client = new Client({ node: env.ELASTIC_URI });
 
 export default client;

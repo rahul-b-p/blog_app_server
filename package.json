@@ -32,10 +32,12 @@
     "@automapper/classes": "^8.8.1",
     "@automapper/core": "^8.8.1",
     "@elastic/elasticsearch": "^9.0.2",
+    "@types/jsonwebtoken": "^9.0.10",
     "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1",
     "morgan": "^1.10.0",
     "winston": "^3.17.0"
