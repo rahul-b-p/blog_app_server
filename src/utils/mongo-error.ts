@@ -1,7 +1,17 @@
-import { BadRequestError, ConflictError, InternalServerError, NotFoundError } from '../errors';
+import {
+  BadRequestError,
+  ConflictError,
+  CustomError,
+  InternalServerError,
+  NotFoundError,
+} from '../errors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handleMongoDBError = (error: any, operation: string = 'operation') => {
+  // Skip if it's already a custom error
+  if (error instanceof CustomError) {
+    throw error;
+  }
   // Mongoose Validation Errors
   if (error.name === 'ValidationError') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -12,3 +12,8 @@ export const signInSchema = Joi.object({
   username: usernameSchema.required(),
   password: passwordSchema.required(),
 });
+
+export const verifyUserSchema = Joi.object({
+  username: usernameSchema.required(),
+  otp: Joi.string().length(6).required(),
+});

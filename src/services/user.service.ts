@@ -1,4 +1,6 @@
-import { CreateUserDto } from '../interfaces';
+import { errorMessage } from '../constants';
+import { NotFoundError } from '../errors';
+import { CreateUserDto, UpdaetUserDto } from '../interfaces';
 import { mapper } from '../mapping';
 import { UserDto } from '../mapping/dtos';
 import { User } from '../models';
@@ -19,6 +21,22 @@ export const findUserByUsername = async (username: string) => {
   }
 };
 
+export const findUserById = async (id: string): Promise<UserDto> => {
+  logger.debug(`Finding user by id: ${id}`);
+  try {
+    const user = await User.findById(id).exec();
+    if (!user) {
+      throw new NotFoundError(errorMessage.USER_NOT_FOUND);
+    }
+    return mapper.map(user, User, UserDto);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error(`Error creating user: ${error.message}`);
+    handleMongoDBError(error);
+    throw error;
+  }
+};
+
 export const createUser = async (user: CreateUserDto): Promise<UserDto> => {
   logger.debug('Creating new User');
   const { password, ...userData } = user;
@@ -32,6 +50,23 @@ export const createUser = async (user: CreateUserDto): Promise<UserDto> => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error(`Error creating user: ${error.message}`);
+    handleMongoDBError(error);
+    throw error;
+  }
+};
+
+export const updateUserById = async (id: string, updateData: UpdaetUserDto) => {
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new NotFoundError(errorMessage.USER_NOT_FOUND);
+    }
+
+    Object.assign(user, updateData);
+    user.save();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error(`Error updating user: ${error.message}`);
     handleMongoDBError(error);
     throw error;
   }

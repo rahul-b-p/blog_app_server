@@ -1,6 +1,6 @@
 import { sign, verify } from 'jsonwebtoken';
 import env from '../../config/env';
-import { StringValue, TokenPayload } from '../../interfaces/jwt.interface';
+import { StringValue, TokenPayload } from '../../interfaces';
 
 export const generateRefreshToken = (id: string): string => {
   return sign({ id }, env.ACCESS_SECRET, {

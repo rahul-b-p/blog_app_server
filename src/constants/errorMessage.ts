@@ -16,4 +16,8 @@ export default {
   INVALID_ROLE: 'Invalid role',
   USERNAME_NOT_EXISTS: 'No user exist with provided username',
   INVALID_PASSWORD: 'Invalid password',
+  USER_NOT_FOUND: 'User Not found ',
+  OTP_EXPIRED: 'OTP Has been expired',
+  INVALID_OTP: 'Invalid OTP',
+  OTP_NOT_FOUND: 'OTP not Found',
 };

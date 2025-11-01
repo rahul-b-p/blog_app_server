@@ -20,6 +20,8 @@ interface EnvVars {
   REFRESH_EXPIRE_IN: string;
   ACCESS_SECRET: string;
   ACCESS_EXPIRE_IN: string;
+  MAIL_APP_USER: string;
+  MAIL_APP_PASS: string;
 }
 
 const envSchema = Joi.object<EnvVars>({
@@ -35,6 +37,8 @@ const envSchema = Joi.object<EnvVars>({
   REFRESH_EXPIRE_IN: expirationSchema.required(),
   ACCESS_SECRET: secretKeySchema.required(),
   ACCESS_EXPIRE_IN: expirationSchema.required(),
+  MAIL_APP_USER: Joi.string().email().required(),
+  MAIL_APP_PASS: Joi.string().required(),
 })
   .options({ allowUnknown: true })
   .prefs({ convert: true });
