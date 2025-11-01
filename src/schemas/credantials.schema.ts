@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 /**
  * Schema for ADMIN_USERNAME
@@ -11,10 +11,10 @@ export const usernameSchema = Joi.string()
   .min(1)
   .required()
   .messages({
-    "string.pattern.base":
-      "Username must start with a lowercase letter and contain only lowercase letters, numbers, underscores, or dots.",
-    "string.min": "Username must be at least 1 character long.",
-    "string.empty": "Username is required.",
+    'string.pattern.base':
+      'Username must start with a lowercase letter and contain only lowercase letters, numbers, underscores, or dots.',
+    'string.min': 'Username must be at least 1 character long.',
+    'string.empty': 'Username is required.',
   });
 
 /**
@@ -28,10 +28,9 @@ export const fullnameSchema = Joi.string()
   .min(1)
   .required()
   .messages({
-    "string.pattern.base":
-      "Full name must contain only alphabets and single spaces between words.",
-    "string.min": "Full name must be at least 1 character long.",
-    "string.empty": "Full name is required.",
+    'string.pattern.base': 'Full name must contain only alphabets and single spaces between words.',
+    'string.min': 'Full name must be at least 1 character long.',
+    'string.empty': 'Full name is required.',
   });
 
 /**
@@ -41,13 +40,11 @@ export const fullnameSchema = Joi.string()
  */
 export const passwordSchema = Joi.string()
   .min(8)
-  .pattern(
-    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-  )
+  .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
   .required()
   .messages({
-    "string.pattern.base":
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).",
-    "string.min": "Password must be at least 8 characters long.",
-    "string.empty": "Password is required.",
+    'string.pattern.base':
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).',
+    'string.min': 'Password must be at least 8 characters long.',
+    'string.empty': 'Password is required.',
   });

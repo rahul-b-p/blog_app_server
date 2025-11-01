@@ -1,9 +1,5 @@
-import Joi from "joi";
-import {
-  fullnameSchema,
-  passwordSchema,
-  usernameSchema,
-} from "./credantials.schema";
+import Joi from 'joi';
+import { fullnameSchema, passwordSchema, usernameSchema } from './credantials.schema';
 
 export const signUpSchema = Joi.object({
   username: usernameSchema.required(),
@@ -15,4 +11,9 @@ export const signUpSchema = Joi.object({
 export const signInSchema = Joi.object({
   username: usernameSchema.required(),
   password: passwordSchema.required(),
+});
+
+export const verifyUserSchema = Joi.object({
+  username: usernameSchema.required(),
+  otp: Joi.string().length(6).required(),
 });

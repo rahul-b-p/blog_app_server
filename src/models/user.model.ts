@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
-import { IUser } from "../interfaces";
-import { UserRole } from "../enums";
+import mongoose, { Schema } from 'mongoose';
+import { IUser } from '../interfaces';
+import { UserRole } from '../enums';
 
 const userSchema = new Schema<IUser>(
   {
@@ -31,23 +31,29 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    twoFA: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
     toJSON: {
       transform(doc, ret) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         delete (ret as any).__v;
         return ret;
       },
     },
     toObject: {
       transform(doc, ret) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         delete (ret as any).__v;
         return ret;
       },
     },
-  }
+  },
 );
 
-const User = mongoose.model<IUser>("users", userSchema);
+const User = mongoose.model<IUser>('users', userSchema);
 export default User;

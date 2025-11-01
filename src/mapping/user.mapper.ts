@@ -11,36 +11,36 @@ export function configureUserMapping() {
     // Map _id → id
     forMember(
       (dest) => dest.id,
-      mapFrom((src) => src._id.toString()) 
+      mapFrom((src) => src._id.toString()),
     ),
     // Map other fields
     forMember(
       (dest) => dest.fullName,
-      mapFrom((src) => src.fullName)
+      mapFrom((src) => src.fullName),
     ),
     forMember(
       (dest) => dest.username,
-      mapFrom((src) => src.username)
+      mapFrom((src) => src.username),
     ),
     forMember(
       (dest) => dest.email,
-      mapFrom((src) => src.email)
+      mapFrom((src) => src.email),
     ),
     forMember(
       (dest) => dest.role,
-      mapFrom((src) => src.role)
+      mapFrom((src) => src.role),
     ),
     forMember(
       (dest) => dest.verified,
-      mapFrom((src) => src.verified)
+      mapFrom((src) => src.verified),
     ),
     forMember(
       (dest) => dest.createdAt,
-      mapFrom((src) => src.createdAt)
+      mapFrom((src) => src.createdAt),
     ),
     forMember(
       (dest) => dest.updatedAt,
-      mapFrom((src) => src.updatedAt)
-    )
+      mapFrom((src) => src.updatedAt),
+    ),
   );
 }

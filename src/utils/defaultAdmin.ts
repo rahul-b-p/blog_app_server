@@ -1,14 +1,14 @@
-import env  from "../config/env";
-import { UserRole } from "../enums";
-import { userService } from "../services";
-import { logger } from "./logger";
+import env from '../config/env';
+import { UserRole } from '../enums';
+import { userService } from '../services';
+import { logger } from './logger';
 
 export const createDefaultAdmin = async (): Promise<void> => {
-  logger.debug("Checking Application admin is exists or not");
+  logger.debug('Checking Application admin is exists or not');
   try {
     const admin = await userService.findUserByUsername(env.ADMIN_USERNAME);
     if (admin != null) {
-      logger.debug("Admin already exists");
+      logger.debug('Admin already exists');
       return;
     }
 
@@ -20,6 +20,7 @@ export const createDefaultAdmin = async (): Promise<void> => {
       role: UserRole.ADMIN,
     });
     logger.debug(`New Admin created with username:${user.username}`);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     process.exit(1);
   }

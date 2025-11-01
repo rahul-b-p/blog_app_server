@@ -1,2 +1,2 @@
 // exporting all enums
-export * from "./role";
+export * from './role';
