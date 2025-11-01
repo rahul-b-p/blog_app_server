@@ -10,6 +10,8 @@ export default {
   MUST_BE_NUMERIC_STRING: "Must be a numeric string (e.g., '123').",
   INVALID_EXPRATION_STRING:
     "Must be a number followed immediately by a valid unit (e.g., '123Year').",
+  INVALID_TOKEN: 'Invald Token',
+  NO_TOKEN: 'There is no token provided in the request',
 
   // User
   USERNAME_EXISTS: 'User Already Exist with given username',
@@ -20,4 +22,5 @@ export default {
   OTP_EXPIRED: 'OTP Has been expired',
   INVALID_OTP: 'Invalid OTP',
   OTP_NOT_FOUND: 'OTP not Found',
+  INVALID_ACCESS: 'User has no access to perform this action',
 };

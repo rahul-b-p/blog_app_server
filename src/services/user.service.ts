@@ -1,5 +1,5 @@
 import { errorMessage } from '../constants';
-import { NotFoundError } from '../errors';
+import { AuthenticationError, NotFoundError } from '../errors';
 import { CreateUserDto, UpdaetUserDto } from '../interfaces';
 import { mapper } from '../mapping';
 import { UserDto } from '../mapping/dtos';
@@ -21,11 +21,14 @@ export const findUserByUsername = async (username: string) => {
   }
 };
 
-export const findUserById = async (id: string): Promise<UserDto> => {
+export const findUserById = async (id: string, authCheck: boolean = false): Promise<UserDto> => {
   logger.debug(`Finding user by id: ${id}`);
   try {
     const user = await User.findById(id).exec();
     if (!user) {
+      if (authCheck) {
+        throw new AuthenticationError(errorMessage.USER_NOT_FOUND);
+      }
       throw new NotFoundError(errorMessage.USER_NOT_FOUND);
     }
     return mapper.map(user, User, UserDto);
