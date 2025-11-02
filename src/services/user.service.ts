@@ -21,6 +21,17 @@ export const findUserByUsername = async (username: string) => {
   }
 };
 
+export const findUserByEmail = async (email: string) => {
+  logger.debug(`Finding user by email: ${email}`);
+  try {
+    return await User.findOne({ email }).exec();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error(`Error finding user by email: ${error.message}`);
+    throw error;
+  }
+};
+
 export const findUserById = async (id: string, authCheck: boolean = false): Promise<UserDto> => {
   logger.debug(`Finding user by id: ${id}`);
   try {
@@ -66,7 +77,7 @@ export const updateUserById = async (id: string, updateData: UpdaetUserDto) => {
     }
 
     Object.assign(user, updateData);
-    user.save();
+    await user.save();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error(`Error updating user: ${error.message}`);

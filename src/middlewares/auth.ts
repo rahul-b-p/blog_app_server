@@ -1,12 +1,11 @@
-import { NextFunction, Response } from 'express';
-import { ExtendedRequest } from '../interfaces/';
+import { NextFunction, Request, Response } from 'express';
 import { AuthenticationError } from '../errors';
 import { errorMessage } from '../constants';
 import { verifyAccessToken } from '../utils/jwt';
 import { validateObjectId } from '../validations';
 import { userService } from '../services';
 
-export const authenticateUser = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
+export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 

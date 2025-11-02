@@ -22,6 +22,10 @@ interface EnvVars {
   ACCESS_EXPIRE_IN: string;
   MAIL_APP_USER: string;
   MAIL_APP_PASS: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
+  FACEBOOK_APP_ID: string;
+  FACEBOOK_APP_SECRET: string;
 }
 
 const envSchema = Joi.object<EnvVars>({
@@ -39,6 +43,10 @@ const envSchema = Joi.object<EnvVars>({
   ACCESS_EXPIRE_IN: expirationSchema.required(),
   MAIL_APP_USER: Joi.string().email().required(),
   MAIL_APP_PASS: Joi.string().required(),
+  GOOGLE_CLIENT_ID: Joi.string().required(),
+  GOOGLE_CLIENT_SECRET: Joi.string().required(),
+  FACEBOOK_APP_ID: Joi.string().required(),
+  FACEBOOK_APP_SECRET: Joi.string().required(),
 })
   .options({ allowUnknown: true })
   .prefs({ convert: true });

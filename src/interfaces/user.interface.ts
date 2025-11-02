@@ -20,6 +20,7 @@ export interface CreateUserDto {
   email: string;
   password: string;
   role: UserRole;
+  verified?: boolean;
 }
 
 export interface UpdaetUserDto {
