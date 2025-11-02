@@ -1,5 +1,5 @@
 import { errorMessage } from '../constants';
-import { NotFoundError } from '../errors';
+import { AuthenticationError, NotFoundError } from '../errors';
 import { CreateUserDto, UpdaetUserDto } from '../interfaces';
 import { mapper } from '../mapping';
 import { UserDto } from '../mapping/dtos';
@@ -21,11 +21,25 @@ export const findUserByUsername = async (username: string) => {
   }
 };
 
-export const findUserById = async (id: string): Promise<UserDto> => {
+export const findUserByEmail = async (email: string) => {
+  logger.debug(`Finding user by email: ${email}`);
+  try {
+    return await User.findOne({ email }).exec();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error(`Error finding user by email: ${error.message}`);
+    throw error;
+  }
+};
+
+export const findUserById = async (id: string, authCheck: boolean = false): Promise<UserDto> => {
   logger.debug(`Finding user by id: ${id}`);
   try {
     const user = await User.findById(id).exec();
     if (!user) {
+      if (authCheck) {
+        throw new AuthenticationError(errorMessage.USER_NOT_FOUND);
+      }
       throw new NotFoundError(errorMessage.USER_NOT_FOUND);
     }
     return mapper.map(user, User, UserDto);
@@ -63,7 +77,7 @@ export const updateUserById = async (id: string, updateData: UpdaetUserDto) => {
     }
 
     Object.assign(user, updateData);
-    user.save();
+    await user.save();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error(`Error updating user: ${error.message}`);
