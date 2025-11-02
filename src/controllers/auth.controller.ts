@@ -6,6 +6,8 @@ import { errorMessage, responseMessage } from '../constants';
 import { apiResponse } from '../utils/apiResponse';
 import { CreateUserDto, SignInDto, VerifyUserDto } from '../interfaces';
 import crypto from 'crypto';
+import { UserDto } from '../mapping/dtos';
+import env from '../config/env';
 
 export const signUp = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,9 +62,9 @@ export const verifyUser = async (
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const initiateOAuth2 = (provider: 'google' | 'facebook') => {
-  return (
+  return async (
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
-    req: Request<{}, any, any, { role: string; state: string }>,
+    req: Request<{}, any, any, { role: string; state?: string }>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -71,9 +73,13 @@ export const initiateOAuth2 = (provider: 'google' | 'facebook') => {
       if (!Object.values(UserRole).includes(role)) {
         throw new BadRequestError(errorMessage.INVALID_ROLE);
       }
+
       const state = crypto.randomBytes(32).toString('hex');
-      authService.storeRole(state, role);
-      req.query.state = state;
+      await authService.storeRole(state, role);
+
+      // Store state in res.locals so passport can access it
+      res.locals.oauthState = state;
+
       next();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -84,13 +90,17 @@ export const initiateOAuth2 = (provider: 'google' | 'facebook') => {
 
 export const oAuth2Callback = async (req: Request, res: Response) => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { user, provider } = req.user as any;
-    const code = authService.generateTempCode(user, provider);
+    const user = req.user as UserDto & { provider: 'google' | 'facebook' };
+
+    if (!user || !user.id) {
+      throw new Error('User authentication failed');
+    }
+
+    const code = authService.generateTempCode(user, user.provider);
     res.redirect(`${process.env.SUCCESS_REDIRECT_URI}?code=${encodeURIComponent(code)}`);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    res.redirect(`${process.env.ERROR_REDIRECT_URI}?error=${encodeURIComponent(err.message)}`);
+    res.redirect(`${env.ERROR_REDIRECT_URI}?error=${encodeURIComponent(err.message)}`);
   }
 };
 

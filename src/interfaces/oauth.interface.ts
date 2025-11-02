@@ -1,5 +1,6 @@
 import { Profile } from 'passport';
 import { UserRole } from '../enums';
+import { UserDto } from '../mapping/dtos';
 
 export interface OAuth2Token {
   userId: string;
@@ -17,6 +18,7 @@ export interface OAuthProfile {
 }
 
 export interface OAuthUser {
+  user?: UserDto;
   profile?: Profile;
   provider?: 'google' | 'facebook';
 }

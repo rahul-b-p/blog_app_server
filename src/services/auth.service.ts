@@ -79,8 +79,10 @@ export const storeRole = async (state: string, role: UserRole) => {
 };
 
 export const consumeRole = async (state: string): Promise<UserRole> => {
+  console.log(state);
   const key = REDIS_PREFIX + state;
   const role = await redis.get(key);
+  console.log(role);
 
   if (!role) {
     throw new AuthenticationError(errorMessage.INVALI_OAUTH);
