@@ -29,6 +29,7 @@ interface EnvVars {
   APP_URL: string;
   SUCCESS_REDIRECT_URI: string;
   ERROR_REDIRECT_URI: string;
+  TEMP_CODE_SECRET: string;
 }
 
 const envSchema = Joi.object<EnvVars>({
@@ -53,6 +54,7 @@ const envSchema = Joi.object<EnvVars>({
   APP_URL: Joi.string().required(),
   SUCCESS_REDIRECT_URI: Joi.string().uri().default('http://localhost:3000'),
   ERROR_REDIRECT_URI: Joi.string().uri().default('http://localhost:3000'),
+  TEMP_CODE_SECRET: secretKeySchema.required(),
 })
   .options({ allowUnknown: true })
   .prefs({ convert: true });

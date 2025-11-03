@@ -32,7 +32,7 @@ export const signIn = async (userData: SignInDto) => {
   if (!user.verified || user.twoFA) {
     const otp = generateOTP();
     await otpService.createOtp(user._id.toString(), otp);
-    //proccess in back ground
+    // Process in background
     sendOtp(user.email, user.username, otp);
     return null;
   }
@@ -75,22 +75,52 @@ export const verifyUser = async (verifyData: VerifyUserDto) => {
 export const storeRole = async (state: string, role: UserRole) => {
   logger.debug(`Storing role ${role} in Redis for state: ${state}`);
   const key = REDIS_PREFIX + state;
-  await redis.set(key, role, 'EX', STATE_TTL);
+
+  try {
+    await redis.set(key, role, 'EX', STATE_TTL);
+    logger.debug(`Successfully stored role in Redis with key: ${key}`);
+  } catch (error) {
+    logger.error(`Failed to store role in Redis:`, error);
+    throw new InternalServerError('Failed to store OAuth state');
+  }
 };
 
 export const consumeRole = async (state: string): Promise<UserRole> => {
-  console.log(state);
-  const key = REDIS_PREFIX + state;
-  const role = await redis.get(key);
-  console.log(role);
-
-  if (!role) {
+  if (!state) {
+    logger.error('State parameter is missing or empty');
     throw new AuthenticationError(errorMessage.INVALI_OAUTH);
   }
 
-  await redis.del(key); // One-time use
-  logger.debug(`Consumed role ${role} from Redis`);
-  return role as UserRole;
+  const key = REDIS_PREFIX + state;
+  logger.debug(`Attempting to retrieve role from Redis with key: ${key}`);
+
+  try {
+    const role = await redis.get(key);
+    logger.debug(`Retrieved value from Redis: ${role}`);
+
+    if (!role) {
+      logger.error(`No role found in Redis for state: ${state}`);
+      throw new AuthenticationError(errorMessage.INVALI_OAUTH);
+    }
+
+    // Validate that the role is a valid UserRole
+    if (!Object.values(UserRole).includes(role as UserRole)) {
+      logger.error(`Invalid role retrieved from Redis: ${role}`);
+      throw new AuthenticationError(errorMessage.INVALI_OAUTH);
+    }
+
+    // Delete the state (one-time use)
+    await redis.del(key);
+    logger.debug(`Consumed and deleted role ${role} from Redis`);
+
+    return role as UserRole;
+  } catch (error) {
+    logger.error(`Error consuming role from Redis:`, error);
+    if (error instanceof AuthenticationError) {
+      throw error;
+    }
+    throw new InternalServerError('Failed to retrieve OAuth state');
+  }
 };
 
 const getUserInfo = (profile: OAuthProfile, provider: 'google' | 'facebook') => {
@@ -102,9 +132,10 @@ const getUserInfo = (profile: OAuthProfile, provider: 'google' | 'facebook') => 
       ? profile.displayName || email.split('@')[0]
       : `${profile.name?.givenName} ${profile.name?.familyName}`.trim() || email.split('@')[0];
 
+  // Fix: was concatenating givenName twice
   const fullName = profile.name
-    ? profile.name.givenName + ' ' + profile.name.givenName
-    : provider + 'user';
+    ? `${profile.name.givenName || ''} ${profile.name.familyName || ''}`.trim()
+    : `${provider}_user`;
 
   return { email, username, fullName };
 };
@@ -117,7 +148,10 @@ export const findOrCreateUser = async (
   const { email, username, fullName } = getUserInfo(profile, provider);
 
   const user = await userService.findUserByEmail(email);
-  if (user) return userService.findUserById(user._id.toString());
+  if (user) {
+    logger.debug(`Existing user found for email: ${email}`);
+    return userService.findUserById(user._id.toString());
+  }
 
   // Generate unique username
   let finalUsername = username;
@@ -126,12 +160,14 @@ export const findOrCreateUser = async (
     finalUsername = `${username}_${i++}`;
   }
 
+  logger.debug(`Creating new user with username: ${finalUsername}`);
+
   const newUser = await userService.createUser({
     email,
     username: finalUsername,
-    password: crypto.randomBytes(16).toString('hex'), // dummy
+    password: crypto.randomBytes(16).toString('hex'), // dummy password
     role,
-    verified: true,
+    verified: true, // OAuth users are pre-verified
     fullName,
   });
 
@@ -139,6 +175,7 @@ export const findOrCreateUser = async (
 };
 
 export const generateTempCode = (user: UserDto, provider: 'google' | 'facebook'): string => {
+  logger.debug(`Generating temporary code for user: ${user.id}`);
   return createOAuth2Token({
     userId: user.id,
     email: user.email,
@@ -148,11 +185,18 @@ export const generateTempCode = (user: UserDto, provider: 'google' | 'facebook')
 };
 
 export const exchangeCode = async (code: string) => {
-  const payload = verifyOAuth2Token(code);
-  const user = await userService.findUserById(payload.userId, true);
+  try {
+    const payload = verifyOAuth2Token(code);
+    logger.debug(`Exchanging code for user: ${payload.userId}`);
 
-  return {
-    accessToken: generateAccessToken(user.id, user.role),
-    refreshToken: generateRefreshToken(user.id),
-  };
+    const user = await userService.findUserById(payload.userId, true);
+
+    return {
+      accessToken: generateAccessToken(user.id, user.role),
+      refreshToken: generateRefreshToken(user.id),
+    };
+  } catch (error) {
+    logger.error(`Failed to exchange code:`, error);
+    throw error;
+  }
 };

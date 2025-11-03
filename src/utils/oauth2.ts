@@ -1,15 +1,19 @@
 import crypto from 'crypto';
 import { OAuth2Token } from '../interfaces/oauth.interface';
-import { BadRequestError } from '../errors';
+import { AuthenticationError, CustomError } from '../errors';
+import env from '../config/env';
+import { errorMessage } from '../constants';
+import { logger } from './logger';
 
 const ALGORITHM = 'aes-256-cbc';
 const IV_LENGTH = 16;
+const TOKEN_EXPIRY_MS = 5 * 60 * 1000;
 
 /**
  * Derives a key from the secret to ensure it's the correct length (32 bytes for aes-256)
  */
 const getKey = (): Buffer => {
-  return crypto.scryptSync(process.env.TEMP_CODE_SECRET!, 'salt', 32);
+  return crypto.scryptSync(env.TEMP_CODE_SECRET, 'salt', 32);
 };
 
 export const createOAuth2Token = (payload: Omit<OAuth2Token, 'createdAt'>): string => {
@@ -32,10 +36,13 @@ export const createOAuth2Token = (payload: Omit<OAuth2Token, 'createdAt'>): stri
 
 export const verifyOAuth2Token = (code: string): Omit<OAuth2Token, 'createdAt'> => {
   try {
+    // Handle URL-encoded codes
+    const decodedCode = code.includes('%') ? decodeURIComponent(code) : code;
+
     // Split IV and encrypted data
-    const parts = code.split(':');
+    const parts = decodedCode.split(':');
     if (parts.length !== 2) {
-      throw new Error('Invalid code format');
+      throw new AuthenticationError(errorMessage.INVALID_OAUTH_CODE);
     }
 
     const iv = Buffer.from(parts[0], 'hex');
@@ -50,8 +57,8 @@ export const verifyOAuth2Token = (code: string): Omit<OAuth2Token, 'createdAt'> 
     const currentTime = Date.now();
     const codeAge = currentTime - (payload.createdAt || 0);
 
-    if (codeAge > 5000) {
-      throw new BadRequestError('Code expired');
+    if (codeAge > TOKEN_EXPIRY_MS) {
+      throw new AuthenticationError(errorMessage.OAUTH_CODE_EXPIRED);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,7 +66,8 @@ export const verifyOAuth2Token = (code: string): Omit<OAuth2Token, 'createdAt'> 
     return result;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    if (error.message === 'Code expired') throw error;
-    throw new Error('Invalid or malformed code');
+    if (error instanceof CustomError) throw error;
+    logger.error('Token verification error:', error.message);
+    throw new AuthenticationError(errorMessage.MALFORMED_OAUTH_CODe);
   }
 };

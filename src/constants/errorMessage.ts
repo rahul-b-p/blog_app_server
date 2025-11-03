@@ -32,4 +32,7 @@ export default {
   CODE_EXPIRED: 'Code expired',
   INVALI_OAUTH: 'Invalid or expired OAuth state',
   EMAIL_REQUIRED_IN_OAUTH: 'Email required in Oauth Response',
+  INVALID_OAUTH_CODE: 'Invalid code format',
+  MALFORMED_OAUTH_CODe: 'Invalid or malformed code',
+  OAUTH_CODE_EXPIRED: 'OAuth code expired',
 };

@@ -1,4 +1,3 @@
-// src/config/passport.ts
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
@@ -19,6 +18,7 @@ passport.use(
         const state = req.query.state as string;
 
         logger.debug(`Google callback - state: ${state}`);
+        logger.debug(`Google callback - full query:`, req.query);
 
         if (!state) {
           throw new Error('State parameter missing in OAuth callback');
@@ -32,7 +32,7 @@ passport.use(
 
         done(null, { ...user, provider: 'google' });
       } catch (error) {
-        logger.error(`Google OAuth error: ${error}`);
+        logger.error(`Google OAuth error:`, error);
         done(error as Error, undefined);
       }
     },
@@ -50,10 +50,10 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        // State comes back from Facebook in the query string
         const state = req.query.state as string;
 
         logger.debug(`Facebook callback - state: ${state}`);
+        logger.debug(`Facebook callback - full query:`, req.query);
 
         if (!state) {
           throw new Error('State parameter missing in OAuth callback');
@@ -67,7 +67,7 @@ passport.use(
 
         done(null, { ...user, provider: 'facebook' });
       } catch (error) {
-        logger.error(`Facebook OAuth error: ${error}`);
+        logger.error(`Facebook OAuth error:`, error);
         done(error as Error, undefined);
       }
     },
