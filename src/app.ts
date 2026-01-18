@@ -4,10 +4,20 @@ import env from './config/env';
 import { errorHandler, notFoundHandler } from './middlewares';
 import router from './routes';
 import redis from './config/redis';
+import cors from 'cors';
 
 const app = express();
 
 app.set('port', env.PORT);
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
 
 app.use(morganLogger);
 
